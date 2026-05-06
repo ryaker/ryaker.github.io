@@ -786,7 +786,7 @@
       <div class="proof-item">
         <span class="proof-icon">⭐</span>
         <div class="proof-text">
-          <strong>363 GitHub stars, 128 forks</strong> on Outlook MCP. Organic. No promotion.
+          <strong id="prose-outlook">363 GitHub stars, 128 forks</strong> on Outlook MCP. Organic. No promotion.
         </div>
       </div>
       <div class="proof-item">
@@ -958,8 +958,8 @@
         <p class="oss-card-name">outlook-mcp</p>
         <p class="oss-card-desc">Model Context Protocol server for Microsoft Outlook. Enables AI agents to read, send, and manage email natively. Most-starred MCP integration for enterprise email.</p>
         <div class="oss-meta">
-          <span class="oss-stat">⭐ 363</span>
-          <span class="oss-stat">🍴 128</span>
+          <span class="oss-stat" id="stars-outlook-mcp">⭐ 363</span>
+          <span class="oss-stat" id="forks-outlook-mcp">🍴 128</span>
           <span class="oss-stat mono">TypeScript</span>
         </div>
       </a>
@@ -968,7 +968,7 @@
         <p class="oss-card-name">Zora</p>
         <p class="oss-card-desc">Security-first autonomous agent framework. The deterministic harness around non-deterministic LLMs. Built for production reliability, not demos.</p>
         <div class="oss-meta">
-          <span class="oss-stat">⭐ 62</span>
+          <span class="oss-stat" id="stars-zora">⭐ 62</span>
           <span class="oss-stat mono">TypeScript</span>
         </div>
       </a>
@@ -977,7 +977,7 @@
         <p class="oss-card-name">SparrowDB</p>
         <p class="oss-card-desc">Embedded graph database written in Rust. v0.1.21, 12 releases. Cypher query interface. Built because the right tool didn't exist yet.</p>
         <div class="oss-meta">
-          <span class="oss-stat">⭐ 41</span>
+          <span class="oss-stat" id="stars-SparrowDB">⭐ 41</span>
           <span class="oss-stat">📦 v0.1.21</span>
           <span class="oss-stat mono">Rust</span>
         </div>
@@ -1110,6 +1110,52 @@
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Live GitHub star/fork counts (24h localStorage cache, graceful fallback to static numbers)
+  (async () => {
+    const REPOS = ['outlook-mcp', 'zora', 'SparrowDB'];
+    const CACHE_KEY = 'gh-stats-v1';
+    const TTL_MS = 24 * 60 * 60 * 1000;
+
+    const apply = (data) => {
+      for (const [repo, { stars, forks }] of Object.entries(data)) {
+        const starEl = document.getElementById(`stars-${repo}`);
+        if (starEl && Number.isFinite(stars)) starEl.textContent = `⭐ ${stars}`;
+        const forkEl = document.getElementById(`forks-${repo}`);
+        if (forkEl && Number.isFinite(forks)) forkEl.textContent = `🍴 ${forks}`;
+      }
+      if (data['outlook-mcp']) {
+        const prose = document.getElementById('prose-outlook');
+        const { stars, forks } = data['outlook-mcp'];
+        if (prose && Number.isFinite(stars) && Number.isFinite(forks)) {
+          prose.textContent = `${stars} GitHub stars, ${forks} forks`;
+        }
+      }
+    };
+
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (cached && Date.now() - cached.t < TTL_MS) {
+        apply(cached.data);
+        return;
+      }
+    } catch (_) {}
+
+    const fresh = {};
+    await Promise.all(REPOS.map(async (repo) => {
+      try {
+        const r = await fetch(`https://api.github.com/repos/ryaker/${repo}`);
+        if (!r.ok) return;
+        const j = await r.json();
+        fresh[repo] = { stars: j.stargazers_count, forks: j.forks_count };
+      } catch (_) {}
+    }));
+
+    if (Object.keys(fresh).length) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: fresh })); } catch (_) {}
+      apply(fresh);
+    }
+  })();
 </script>
 
 </body>
