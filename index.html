@@ -1,1162 +1,1654 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Richard Yaker — Engineering & Technology Executive</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #0d1117;
-    --paper: #f5f2ec;
-    --cream: #ede9e0;
-    --rule: #c8bfaa;
-    --accent: #1a3a5c;
-    --accent-warm: #8b4513;
-    --accent-light: #e8f0f8;
-    --ghost: rgba(13,17,23,0.06);
-    --serif: 'DM Serif Display', Georgia, serif;
-    --sans: 'DM Sans', system-ui, sans-serif;
-    --mono: 'DM Mono', monospace;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-weight: 300;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE TEXTURE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ── TYPOGRAPHY ── */
-  h1, h2, h3 { font-family: var(--serif); font-weight: 400; }
-  
-  .mono { font-family: var(--mono); font-size: 0.8em; letter-spacing: 0.05em; }
-
-  /* ── LAYOUT ── */
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1.2rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(245,242,236,0.88);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .nav-name {
-    font-family: var(--serif);
-    font-size: 1.1rem;
-    color: var(--accent);
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink);
-    text-decoration: none;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { opacity: 1; }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding-top: 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    top: -20%;
-    right: -10%;
-    width: 55%;
-    height: 120%;
-    background: var(--accent);
-    z-index: 0;
-    clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%);
-  }
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5rem 3rem 5rem 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent-warm);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s forwards;
-  }
-
-  .hero-name {
-    font-size: clamp(3rem, 6vw, 5rem);
-    line-height: 1.0;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.4s forwards;
-  }
-
-  .hero-title {
-    font-size: clamp(1rem, 2vw, 1.3rem);
-    font-style: italic;
-    color: var(--ink);
-    opacity: 0;
-    animation: fadeUp 0.8s 0.55s forwards;
-    margin-bottom: 2.5rem;
-    font-weight: 300;
-  }
-
-  .hero-tension {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: rgba(13,17,23,0.7);
-    max-width: 420px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.7s forwards;
-    margin-bottom: 3rem;
-    border-left: 2px solid var(--accent-warm);
-    padding-left: 1.2rem;
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.85s forwards;
-    margin-bottom: 3rem;
-  }
-
-  .stat-item { }
-  .stat-number {
-    font-family: var(--serif);
-    font-size: 2.2rem;
-    color: var(--accent);
-    line-height: 1;
-    display: block;
-  }
-  .stat-label {
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    opacity: 0.5;
-    margin-top: 0.2rem;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.8s 1s forwards;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--accent);
-    color: white;
-    padding: 0.85rem 1.8rem;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .btn-primary:hover { background: #0d2a45; transform: translateY(-1px); }
-
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid var(--rule);
-    color: var(--ink);
-    padding: 0.85rem 1.8rem;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .btn-ghost:hover { border-color: var(--accent); transform: translateY(-1px); }
-
-  .hero-right {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5rem 3rem;
-    color: white;
-    background: var(--accent);
-  }
-
-  .hero-right-label {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 2rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 1.1s forwards;
-  }
-
-  .hero-proof-items {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 1.25s forwards;
-  }
-
-  .proof-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem 1.2rem;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(8px);
-    transition: background 0.2s;
-  }
-  .proof-item:hover { background: rgba(255,255,255,0.12); }
-
-  .proof-icon {
-    font-size: 1.3rem;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-  }
-
-  .proof-text {
-    font-size: 0.88rem;
-    line-height: 1.5;
-    opacity: 0.9;
-    color: white;
-  }
-  .proof-text strong { font-weight: 700; opacity: 1; color: white; }
-
-  /* ── SECTION BASE ── */
-  section { padding: 6rem 0; }
-  
-  .section-label {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent-warm);
-    margin-bottom: 0.8rem;
-  }
-
-  .section-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--accent);
-    margin-bottom: 1rem;
-    line-height: 1.1;
-  }
-
-  .section-subtitle {
-    font-size: 1rem;
-    opacity: 0.6;
-    max-width: 540px;
-    line-height: 1.7;
-  }
-
-  .section-header { margin-bottom: 4rem; }
-
-  hr.rule {
-    border: none;
-    border-top: 1px solid var(--rule);
-    margin: 0;
-  }
-
-  /* ── PROOF NUMBERS ── */
-  .proof-section { background: var(--accent); color: white; padding: 5rem 0; }
-
-  .proof-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-  }
-
-  .proof-cell {
-    padding: 2.5rem 2rem;
-    border-right: 1px solid rgba(255,255,255,0.12);
-    text-align: center;
-  }
-  .proof-cell:last-child { border-right: none; }
-
-  .proof-big {
-    font-family: var(--serif);
-    font-size: 3.2rem;
-    display: block;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-
-  .proof-desc {
-    font-size: 0.82rem;
-    opacity: 0.65;
-    letter-spacing: 0.04em;
-    line-height: 1.4;
-    font-weight: 400;
-  }
-
-  /* ── WORK CARDS ── */
-  .work-section { background: var(--cream); }
-
-  .work-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5px;
-    background: var(--rule);
-  }
-
-  .work-card {
-    background: var(--paper);
-    padding: 2.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.2s;
-    cursor: default;
-  }
-  .work-card:hover { background: var(--accent-light); }
-  .work-card.featured {
-    grid-column: span 2;
-    background: var(--ink);
-    color: white;
-  }
-  .work-card.featured:hover { background: #1a2535; }
-
-  .work-card-era {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin-bottom: 1rem;
-  }
-  .work-card.featured .work-card-era { opacity: 0.5; }
-
-  .work-card-title {
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    color: var(--accent);
-    margin-bottom: 0.3rem;
-    line-height: 1.2;
-  }
-  .work-card.featured .work-card-title { color: white; }
-
-  .work-card-co {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    opacity: 0.5;
-    margin-bottom: 1.2rem;
-  }
-
-  .work-card-desc {
-    font-size: 0.9rem;
-    line-height: 1.65;
-    opacity: 0.75;
-    margin-bottom: 1.5rem;
-  }
-
-  .work-card-result {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 0.4rem 0.9rem;
-    background: var(--ghost);
-    border: 1px solid var(--rule);
-    color: var(--accent);
-  }
-  .work-card.featured .work-card-result {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.2);
-    color: white;
-  }
-
-  .work-card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 1.2rem;
-  }
-
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.25rem 0.6rem;
-    background: transparent;
-    border: 1px solid var(--rule);
-    color: var(--ink);
-    opacity: 0.5;
-  }
-  .work-card.featured .tag {
-    border-color: rgba(255,255,255,0.2);
-    color: white;
-    opacity: 0.6;
-  }
-
-  /* ── OPEN SOURCE ── */
-  .oss-section { background: var(--paper); }
-
-  .oss-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .oss-card {
-    border: 1px solid var(--rule);
-    padding: 1.8rem;
-    position: relative;
-    transition: border-color 0.2s, transform 0.2s;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-  .oss-card:hover { border-color: var(--accent); transform: translateY(-3px); }
-
-  .oss-card-name {
-    font-family: var(--mono);
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
-  }
-
-  .oss-card-desc {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    opacity: 0.65;
-    margin-bottom: 1.2rem;
-  }
-
-  .oss-meta {
-    display: flex;
-    gap: 1.2rem;
-  }
-
-  .oss-stat {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    opacity: 0.5;
-  }
-
-  /* ── PHILOSOPHY ── */
-  .philosophy-section {
-    background: var(--cream);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .philosophy-section::before {
-    content: '"';
-    font-family: var(--serif);
-    font-size: 25rem;
-    color: var(--rule);
-    position: absolute;
-    top: -8rem;
-    left: -3rem;
-    line-height: 1;
-    pointer-events: none;
-    opacity: 0.4;
-  }
-
-  .philosophy-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 6rem;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .philosophy-quote {
-    font-family: var(--serif);
-    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
-    line-height: 1.45;
-    color: var(--accent);
-    margin-bottom: 2rem;
-  }
-
-  .philosophy-attr {
-    font-size: 0.8rem;
-    opacity: 0.5;
-    font-style: italic;
-  }
-
-  .philosophy-items {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .philosophy-item {
-    padding-left: 1.2rem;
-    border-left: 2px solid var(--rule);
-    transition: border-color 0.2s;
-  }
-  .philosophy-item:hover { border-left-color: var(--accent-warm); }
-
-  .philosophy-item-title {
-    font-weight: 500;
-    font-size: 0.9rem;
-    margin-bottom: 0.3rem;
-    color: var(--accent);
-  }
-
-  .philosophy-item-desc {
-    font-size: 0.85rem;
-    opacity: 0.6;
-    line-height: 1.6;
-  }
-
-  /* ── TIMELINE ── */
-  .timeline-section { background: var(--paper); }
-
-  .timeline {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 0;
-  }
-
-  .timeline-item {
-    display: contents;
-  }
-
-  .timeline-year {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--accent-warm);
-    padding: 1.4rem 2rem 1.4rem 0;
-    text-align: right;
-    border-right: 1px solid var(--rule);
-    position: relative;
-  }
-
-  .timeline-year::after {
-    content: '';
-    position: absolute;
-    right: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 7px;
-    height: 7px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
-
-  .timeline-content {
-    padding: 1.2rem 0 1.2rem 2rem;
-    border-bottom: 1px solid var(--ghost);
-  }
-
-  .timeline-role {
-    font-weight: 500;
-    font-size: 0.9rem;
-    color: var(--accent);
-  }
-
-  .timeline-co {
-    font-size: 0.8rem;
-    opacity: 0.5;
-    margin-top: 0.1rem;
-  }
-
-  /* ── CONTACT ── */
-  .contact-section {
-    background: var(--ink);
-    color: white;
-    padding: 7rem 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .contact-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center bottom, rgba(26,58,92,0.6) 0%, transparent 70%);
-  }
-
-  .contact-section .container { position: relative; z-index: 1; }
-
-  .contact-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent-warm);
-    margin-bottom: 1.5rem;
-    opacity: 0.8;
-  }
-
-  .contact-title {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    color: white;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-  }
-
-  .contact-sub {
-    font-size: 1rem;
-    opacity: 0.5;
-    max-width: 480px;
-    margin: 0 auto 3rem;
-    line-height: 1.7;
-  }
-
-  .contact-links {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 3rem;
-  }
-
-  .contact-detail {
-    display: flex;
-    justify-content: center;
-    gap: 2.5rem;
-    opacity: 0.4;
-    font-size: 0.82rem;
-    font-family: var(--mono);
-    flex-wrap: wrap;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .fade-in {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-in.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    nav { padding: 1rem; }
-    .nav-links { display: none; }
-
-    .hero {
-      grid-template-columns: 1fr;
-      min-height: auto;
-    }
-    .hero::after { display: none; }
-    .hero-left { padding: 5rem 1.5rem 2rem; }
-    .hero-right {
-      background: var(--accent);
-      padding: 2.5rem 1.5rem;
-    }
-    .hero-stats { gap: 1.5rem; }
-    .stat-number { font-size: 1.8rem; }
-
-    .proof-grid { grid-template-columns: 1fr 1fr; }
-    .proof-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); }
-
-    .work-grid { grid-template-columns: 1fr; }
-    .work-card.featured { grid-column: span 1; }
-
-    .oss-grid { grid-template-columns: 1fr; }
-
-    .philosophy-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .philosophy-section::before { font-size: 12rem; }
-
-    .timeline { grid-template-columns: 80px 1fr; }
-
-    .contact-links { flex-direction: column; align-items: center; }
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-name">Richard Yaker</a>
-  <ul class="nav-links">
-    <li><a href="#work">Work</a></li>
-    <li><a href="#oss">Open Source</a></li>
-    <li><a href="#philosophy">Philosophy</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <p class="hero-eyebrow">Engineering & Technology Executive · Camarillo, CA · Remote</p>
-    <h1 class="hero-name">Richard<br>Yaker</h1>
-    <p class="hero-title">I build things that run without you watching.</p>
-    <p class="hero-tension">
-      I'm co-founding Tengo while keeping the job search open. Until that funding closes, I'm available for CTO, VP Engineering, and Head of AI roles at companies that want an executive who still ships.
-    </p>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <span class="stat-number">40+</span>
-        <span class="stat-label">Engineers Scaled</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">82%</span>
-        <span class="stat-label">Sev1 Reduction</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">30yr</span>
-        <span class="stat-label">In Production</span>
-      </div>
-    </div>
-    <div class="hero-cta">
-      <a href="mailto:ryaker@yaker.org" class="btn-primary">↗ Get in Touch</a>
-      <a href="https://linkedin.com/in/richard-yaker" target="_blank" class="btn-ghost">LinkedIn</a>
-      <a href="https://github.com" target="_blank" class="btn-ghost">GitHub</a>
-    </div>
-  </div>
-  <div class="hero-right">
-    <p class="hero-right-label">// proof points</p>
-    <div class="hero-proof-items">
-      <div class="proof-item">
-        <span class="proof-icon">⚡</span>
-        <div class="proof-text">
-          <strong>Live in the App Store.</strong> MyMoneyCoach.ai — full-stack AI coaching platform with RAG, vector DB, and semantic memory. Built solo.
-        </div>
-      </div>
-      <div class="proof-item">
-        <span class="proof-icon">⭐</span>
-        <div class="proof-text">
-          <strong id="prose-outlook">363 GitHub stars, 128 forks</strong> on Outlook MCP. Organic. No promotion.
-        </div>
-      </div>
-      <div class="proof-item">
-        <span class="proof-icon">🏗️</span>
-        <div class="proof-text">
-          <strong>$5B+ platform, 99.95% uptime.</strong> Herbalife e-commerce across 90+ markets, 3M+ monthly orders.
-        </div>
-      </div>
-      <div class="proof-item">
-        <span class="proof-icon">🎯</span>
-        <div class="proof-text">
-          <strong>WithoutABox → Amazon.</strong> Platform I built in 2000 was still running in 2008 when Amazon acquired it.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROOF NUMBERS -->
-<section class="proof-section">
-  <div class="container">
-    <div class="proof-grid fade-in">
-      <div class="proof-cell">
-        <span class="proof-big">82%</span>
-        <p class="proof-desc">Severity 1 incident reduction<br>over 3 years at Herbalife</p>
-      </div>
-      <div class="proof-cell">
-        <span class="proof-big">15%</span>
-        <p class="proof-desc">Infrastructure cost reduction<br>same 3-year period</p>
-      </div>
-      <div class="proof-cell">
-        <span class="proof-big">6+</span>
-        <p class="proof-desc">Years WithoutABox ran<br>after I left — acquired by Amazon</p>
-      </div>
-      <div class="proof-cell">
-        <span class="proof-big">353</span>
-        <p class="proof-desc">Stars on Outlook MCP<br>organic, no promotion</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WORK -->
-<section class="work-section" id="work">
-  <div class="container">
-    <div class="section-header fade-in">
-      <p class="section-label">// selected work</p>
-      <h2 class="section-title">What I've Built</h2>
-      <p class="section-subtitle">Across startups, growth companies, and a $5B enterprise. The through-line: platforms built to last.</p>
-    </div>
-
-    <div class="work-grid fade-in">
-
-      <div class="work-card featured">
-        <p class="work-card-era">2016 – 2023</p>
-        <h3 class="work-card-title">Built a Global SRE Organization from 4 to 40+</h3>
-        <p class="work-card-co">Senior Manager, DevOps & SRE · Herbalife Nutrition</p>
-        <p class="work-card-desc">
-          Scaled engineering across 6 international locations (LA, Winston-Salem, Guadalajara, Kuala Lumpur, Krakow, Bengaluru). Established 5 new platform teams based on Team Topologies: Kubernetes, Observability, Messaging, API Management, Value Stream Delivery. Achieved 99.95% uptime on a platform processing 3M+ monthly orders across 90+ markets. 82% reduction in Sev1 incidents. 15% infrastructure cost reduction. 90%+ retention.
-        </p>
-        <span class="work-card-result">$5B+ Revenue Platform · 350-person Engineering Org</span>
-        <div class="work-card-tags">
-          <span class="tag">Kubernetes</span>
-          <span class="tag">Splunk/Dynatrace</span>
-          <span class="tag">Team Topologies</span>
-          <span class="tag">Multi-cloud</span>
-          <span class="tag">Confluent Kafka</span>
-          <span class="tag">Apigee</span>
-        </div>
-      </div>
-
-      <div class="work-card">
-        <p class="work-card-era">2024 – Present</p>
-        <h3 class="work-card-title">MyMoneyCoach.ai</h3>
-        <p class="work-card-co">Founder & CTO · Solopreneur</p>
-        <p class="work-card-desc">
-          Full-stack AI coaching platform in production on the App Store. LLM integration, RAG with vector databases, semantic cross-session memory, multi-agent architecture via MCP. Built and shipped alone, start to finish.
-        </p>
-        <span class="work-card-result">Live in the App Store</span>
-        <div class="work-card-tags">
-          <span class="tag">React Native</span>
-          <span class="tag">RAG</span>
-          <span class="tag">MCP</span>
-          <span class="tag">Neo4j</span>
-          <span class="tag">Supabase</span>
-        </div>
-      </div>
-
-      <div class="work-card">
-        <p class="work-card-era">2000 – 2002</p>
-        <h3 class="work-card-title">WithoutABox</h3>
-        <p class="work-card-co">Founding CTO · Acquired by Amazon/IMDb 2008</p>
-        <p class="work-card-desc">
-          Built the first online film festival submission platform from scratch. 54 top festivals including Sundance. 10,000 filmmakers onboarded in 10 months. ~50% under $800K budget. The platform I shipped in 2002 was still running when Amazon acquired the company in 2008.
-        </p>
-        <span class="work-card-result">$125K equity at acquisition · 6 years post-departure</span>
-        <div class="work-card-tags">
-          <span class="tag">Linux</span>
-          <span class="tag">PHP</span>
-          <span class="tag">Oracle</span>
-          <span class="tag">Architecture</span>
-        </div>
-      </div>
-
-      <div class="work-card">
-        <p class="work-card-era">2011 – 2016</p>
-        <h3 class="work-card-title">iChange & Weight Loss Challenge</h3>
-        <p class="work-card-co">Manager, Software Development · Herbalife</p>
-        <p class="work-card-desc">
-          Built iChange — a two-sided consumer wellness coaching platform where Herbalife distributors served as coaches to their members, with nutrition tracking, task assignment, progress tracking, community groups, and social accountability. Grew team from 4 to 25 across 3 time zones; rewrote the platform from PHP/Symfony to Ruby/Sinatra with native iOS and Android apps. Distributors using iChange saw 7% better member retention, 4% better recruiting, and 6% better sales vs. non-users. The companion Weight Loss Challenge platform tracked 1M+ lbs across 12,000+ challenges and ran 9+ years with no dedicated team assigned to it.
-        </p>
-        <span class="work-card-result">+7% retention · +4% recruiting · +6% sales · 9+ years zero-maintenance</span>
-        <div class="work-card-tags">
-          <span class="tag">Ruby/Sinatra</span>
-          <span class="tag">MongoDB</span>
-          <span class="tag">Neo4j</span>
-          <span class="tag">iOS</span>
-          <span class="tag">Android</span>
-          <span class="tag">Heroku</span>
-        </div>
-      </div>
-
-      <div class="work-card">
-        <p class="work-card-era">2023 – 2026</p>
-        <h3 class="work-card-title">Gondola InsurTech</h3>
-        <p class="work-card-co">Fractional CTO</p>
-        <p class="work-card-desc">
-          Built complete technical infrastructure for AI-driven insurance strategy platform. Document extraction service, insurance comparison app, internal portals, visualization tools. 850+ GitHub contributions. AI-powered document processing reduced insurance quote analysis from hours to minutes.
-        </p>
-        <span class="work-card-result">850+ GitHub contributions</span>
-        <div class="work-card-tags">
-          <span class="tag">Python</span>
-          <span class="tag">Azure</span>
-          <span class="tag">AWS Textract</span>
-          <span class="tag">LLM APIs</span>
-        </div>
-      </div>
-
-      <div class="work-card">
-        <p class="work-card-era">1995 – 1999</p>
-        <h3 class="work-card-title">Netscape DevEdge</h3>
-        <p class="work-card-co">Developer Support Engineer · Employee #937</p>
-        <p class="work-card-desc">
-          One of the first five people to learn JavaScript from creator Brendan Eich. Advised CNET, HotWired, ABC, Disney, CNNfn, CBS SportsLine on building for the web. Managed a team of 8. Remote from Los Angeles — 1997. Thirty years of continuous JavaScript from invention through modern frameworks.
-        </p>
-        <span class="work-card-result">30 years JavaScript · from invention</span>
-        <div class="work-card-tags">
-          <span class="tag">JavaScript</span>
-          <span class="tag">DevEdge</span>
-          <span class="tag">Remote-first</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- OPEN SOURCE -->
-<section class="oss-section" id="oss">
-  <div class="container">
-    <div class="section-header fade-in">
-      <p class="section-label">// open source</p>
-      <h2 class="section-title">What I Ship in Public</h2>
-      <p class="section-subtitle">I don't just architect AI systems. I build them, publish them, and watch communities form organically around them.</p>
-    </div>
-
-    <div class="oss-grid fade-in">
-      <a href="https://github.com" target="_blank" class="oss-card">
-        <p class="oss-card-name">outlook-mcp</p>
-        <p class="oss-card-desc">Model Context Protocol server for Microsoft Outlook. Enables AI agents to read, send, and manage email natively. Most-starred MCP integration for enterprise email.</p>
-        <div class="oss-meta">
-          <span class="oss-stat" id="stars-outlook-mcp">⭐ 363</span>
-          <span class="oss-stat" id="forks-outlook-mcp">🍴 128</span>
-          <span class="oss-stat mono">TypeScript</span>
-        </div>
-      </a>
-
-      <a href="https://github.com" target="_blank" class="oss-card">
-        <p class="oss-card-name">Zora</p>
-        <p class="oss-card-desc">Security-first autonomous agent framework. The deterministic harness around non-deterministic LLMs. Built for production reliability, not demos.</p>
-        <div class="oss-meta">
-          <span class="oss-stat" id="stars-zora">⭐ 62</span>
-          <span class="oss-stat mono">TypeScript</span>
-        </div>
-      </a>
-
-      <a href="https://github.com" target="_blank" class="oss-card">
-        <p class="oss-card-name">SparrowDB</p>
-        <p class="oss-card-desc">Embedded graph database written in Rust. v0.1.21, 12 releases. Cypher query interface. Built because the right tool didn't exist yet.</p>
-        <div class="oss-meta">
-          <span class="oss-stat" id="stars-SparrowDB">⭐ 41</span>
-          <span class="oss-stat">📦 v0.1.21</span>
-          <span class="oss-stat mono">Rust</span>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- PHILOSOPHY -->
-<section class="philosophy-section" id="philosophy">
-  <div class="container">
-    <div class="philosophy-grid fade-in">
-      <div>
-        <p class="section-label">// leadership philosophy</p>
-        <blockquote class="philosophy-quote">
-          "Most of what gets called AI engineering right now is people wiring up demos. I build the harness. The deterministic part. The part that has to keep working when nobody's watching."
-        </blockquote>
-        <p class="philosophy-attr">— on what makes production AI different from prototype AI</p>
-      </div>
-      <div class="philosophy-items">
-        <div class="philosophy-item">
-          <p class="philosophy-item-title">Build for the successor, not the sprint</p>
-          <p class="philosophy-item-desc">WithoutABox ran 6 years after I left. The Weight Loss Challenge ran 9+ years with no team. I optimize for longevity, not demos.</p>
-        </div>
-        <div class="philosophy-item">
-          <p class="philosophy-item-title">Developer joy drives adoption</p>
-          <p class="philosophy-item-desc">Learned at Netscape in 1995. The tools change. The fundamental driver of adoption — making engineers feel capable and creative — never does.</p>
-        </div>
-        <div class="philosophy-item">
-          <p class="philosophy-item-title">Psychological safety is a technical investment</p>
-          <p class="philosophy-item-desc">Teams that can say "I don't know" ship faster than teams that can't. 90%+ retention over 6 years wasn't an accident.</p>
-        </div>
-        <div class="philosophy-item">
-          <p class="philosophy-item-title">Be the calm in the room</p>
-          <p class="philosophy-item-desc">Twenty years of daily Vedic meditation. When Sev1s hit at 2am, the executive who stays grounded makes better decisions than the one in fight-or-flight.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TIMELINE -->
-<section class="timeline-section">
-  <div class="container">
-    <div class="section-header fade-in">
-      <p class="section-label">// career arc</p>
-      <h2 class="section-title">30 Years of Building</h2>
-    </div>
-    <div class="timeline fade-in">
-      <div class="timeline-item">
-        <div class="timeline-year">2024</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Founder & CTO — MyMoneyCoach.ai</p>
-          <p class="timeline-co">AI coaching platform · Live in App Store</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">2023</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Fractional CTO — Gondola InsurTech</p>
-          <p class="timeline-co">AI document processing · 850+ GitHub contributions</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">2016</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Sr. Manager, DevOps & SRE — Herbalife Nutrition</p>
-          <p class="timeline-co">4 → 40+ engineers · 6 countries · 99.95% uptime</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">2011</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Manager, Software Development — Herbalife</p>
-          <p class="timeline-co">4 → 25 engineers · iOS + Android · measurable business results</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">2000</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Founding CTO — WithoutABox</p>
-          <p class="timeline-co">Acquired by Amazon/IMDb 2008 · platform ran 6 years post-departure</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">1995</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Developer Support Engineer — Netscape</p>
-          <p class="timeline-co">Employee #937 · Learned JavaScript from Brendan Eich</p>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-year">1990</div>
-        <div class="timeline-content">
-          <p class="timeline-role">Software Engineer — Amdahl Corporation</p>
-          <p class="timeline-co">UNIX kernel development · ported Sys V4 to IBM mainframes</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact-section" id="contact">
-  <div class="container">
-    <p class="contact-eyebrow">// available for senior roles</p>
-    <h2 class="contact-title">Let's Talk</h2>
-    <p class="contact-sub">CTO · VP Engineering · Head of AI/Platform. Remote or LA/Ventura County. $200K+ base. If you're building something that needs to actually work in production, I know how to do that.</p>
-    <div class="contact-links">
-      <a href="mailto:ryaker@yaker.org" class="btn-primary" style="font-size:0.95rem; padding: 1rem 2.5rem;">↗ ryaker@yaker.org</a>
-      <a href="https://linkedin.com/in/richard-yaker" target="_blank" class="btn-ghost" style="color:white; border-color: rgba(255,255,255,0.3); font-size:0.95rem; padding: 1rem 2.5rem;">LinkedIn</a>
-    </div>
-    <div class="contact-detail">
-      <span>(805) 732-2129</span>
-      <span>Camarillo, CA</span>
-      <span>B.S. EE · Columbia University</span>
-      <span>linkedin.com/in/richard-yaker</span>
-    </div>
-  </div>
-</section>
-
-<script>
-  // Intersection Observer for fade-in animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <title>Richard Yaker — Engineering & Technology Executive</title>
+    <meta
+      name="description"
+      content="Richard Yaker builds platforms that keep running without anyone watching. Available for CTO, VP Engineering, and Head of AI roles. 30 years in production, from Netscape to MCP."
+    />
+    <meta property="og:title" content="Richard Yaker — Engineering & Technology Executive" />
+    <meta
+      property="og:description"
+      content="I build things that run without you watching. 30 years in production, from Netscape to MCP."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ryaker.github.io/" />
+    <style>
+      /* ─────────────────────────────────────────────
+     TOKENS  — light first, dark redefined below
+     ───────────────────────────────────────────── */
+      :root {
+        color-scheme: light dark;
+
+        --bg: #fbfbfd;
+        --bg-elev: #ffffff;
+        --bg-section: #f5f5f7;
+        --bg-inverse: #1d1d1f;
+        --text: #1d1d1f;
+        --text-2: #6e6e73;
+        --text-3: #86868b;
+        --text-inverse: #f5f5f7;
+        --separator: rgba(0, 0, 0, 0.08);
+        --accent: #0071e3;
+        --accent-hover: #0077ed;
+        --accent-text: #0066cc;
+        --green: #248a3d;
+        --amber: #b25000;
+        --card: #ffffff;
+        --card-border: rgba(0, 0, 0, 0.06);
+        --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+        --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 20px 40px -16px rgba(0, 0, 0, 0.18);
+        --material: rgba(251, 251, 253, 0.72);
+        --material-edge: rgba(255, 255, 255, 0.6);
+        --chip: rgba(0, 0, 0, 0.045);
+        --chip-text: #424245;
+
+        --font:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+        --radius-lg: 24px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+        --radius-pill: 980px;
+
+        /* Critically damped-feeling curves. No overshoot. */
+        --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+        --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
+        --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+        --t-fast: 120ms;
+        --t-base: 320ms;
+        --t-slow: 560ms;
+
+        --container: 1080px;
+        --gutter: clamp(1.25rem, 4vw, 2.5rem);
       }
-    });
-  }, { threshold: 0.1 });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-  // Live GitHub star/fork counts (24h localStorage cache, graceful fallback to static numbers)
-  (async () => {
-    const REPOS = ['outlook-mcp', 'zora', 'SparrowDB'];
-    const CACHE_KEY = 'gh-stats-v1';
-    const TTL_MS = 24 * 60 * 60 * 1000;
-
-    const apply = (data) => {
-      for (const [repo, { stars, forks }] of Object.entries(data)) {
-        const starEl = document.getElementById(`stars-${repo}`);
-        if (starEl && Number.isFinite(stars)) starEl.textContent = `⭐ ${stars}`;
-        const forkEl = document.getElementById(`forks-${repo}`);
-        if (forkEl && Number.isFinite(forks)) forkEl.textContent = `🍴 ${forks}`;
-      }
-      if (data['outlook-mcp']) {
-        const prose = document.getElementById('prose-outlook');
-        const { stars, forks } = data['outlook-mcp'];
-        if (prose && Number.isFinite(stars) && Number.isFinite(forks)) {
-          prose.textContent = `${stars} GitHub stars, ${forks} forks`;
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #000000;
+          --bg-elev: #1d1d1f;
+          --bg-section: #0b0b0d;
+          --bg-inverse: #f5f5f7;
+          --text: #f5f5f7;
+          --text-2: #a1a1a6;
+          --text-3: #86868b;
+          --text-inverse: #1d1d1f;
+          --separator: rgba(255, 255, 255, 0.12);
+          --accent: #0a84ff;
+          --accent-hover: #2b94ff;
+          --accent-text: #2997ff;
+          --green: #30d158;
+          --amber: #ffb340;
+          --card: #1c1c1e;
+          --card-border: rgba(255, 255, 255, 0.08);
+          --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+          --card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.5), 0 20px 40px -16px rgba(0, 0, 0, 0.8);
+          --material: rgba(0, 0, 0, 0.65);
+          --material-edge: rgba(255, 255, 255, 0.08);
+          --chip: rgba(255, 255, 255, 0.08);
+          --chip-text: #d1d1d6;
         }
       }
-    };
 
-    try {
-      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (cached && Date.now() - cached.t < TTL_MS) {
-        apply(cached.data);
-        return;
+      /* ─────────────────────────────────────────────
+     BASE
+     ───────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    } catch (_) {}
 
-    const fresh = {};
-    await Promise.all(REPOS.map(async (repo) => {
-      try {
-        const r = await fetch(`https://api.github.com/repos/ryaker/${repo}`);
-        if (!r.ok) return;
-        const j = await r.json();
-        fresh[repo] = { stars: j.stargazers_count, forks: j.forks_count };
-      } catch (_) {}
-    }));
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        scroll-padding-top: 4.5rem;
+      }
 
-    if (Object.keys(fresh).length) {
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: fresh })); } catch (_) {}
-      apply(fresh);
-    }
-  })();
-</script>
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 1.0625rem; /* 17px, SF body */
+        line-height: 1.47;
+        letter-spacing: -0.012em;
+        font-optical-sizing: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+        transition:
+          background-color var(--t-slow) var(--ease-inout),
+          color var(--t-slow) var(--ease-inout);
+      }
 
-</body>
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 6px;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .container {
+        max-width: var(--container);
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+
+      /* Type scale — tracking tightens with size, leading loosens as it shrinks. */
+      .display {
+        font-size: clamp(3rem, 9vw, 6.5rem);
+        line-height: 0.98;
+        letter-spacing: -0.035em;
+        font-weight: 700;
+      }
+      .title-1 {
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        line-height: 1.07;
+        letter-spacing: -0.028em;
+        font-weight: 700;
+      }
+      .title-2 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        line-height: 1.12;
+        letter-spacing: -0.022em;
+        font-weight: 600;
+      }
+      .headline {
+        font-size: 1.3125rem;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+      }
+      .body-lg {
+        font-size: clamp(1.1875rem, 2vw, 1.375rem);
+        line-height: 1.4;
+        letter-spacing: -0.017em;
+        font-weight: 400;
+      }
+      .footnote {
+        font-size: 0.8125rem;
+        line-height: 1.38;
+        letter-spacing: 0.005em;
+      }
+      .caption {
+        font-size: 0.75rem;
+        line-height: 1.33;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--text-3);
+      }
+      .muted {
+        color: var(--text-2);
+      }
+
+      /* ─────────────────────────────────────────────
+     NAV — translucent material, content scrolls under
+     ───────────────────────────────────────────── */
+      .nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 100;
+        height: 3.25rem;
+        background: var(--material);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid transparent;
+        transition:
+          border-color var(--t-base) var(--ease-out),
+          background-color var(--t-slow) var(--ease-inout);
+      }
+      .nav.is-scrolled {
+        border-bottom-color: var(--separator);
+      }
+      .nav-inner {
+        max-width: var(--container);
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .nav-name {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        letter-spacing: -0.01em;
+      }
+      .nav-links {
+        display: flex;
+        gap: 0.25rem;
+        list-style: none;
+      }
+      .nav-links a {
+        display: inline-block;
+        padding: 0.4rem 0.75rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--text-2);
+        transition:
+          color var(--t-fast) var(--ease-out),
+          background-color var(--t-fast) var(--ease-out),
+          transform var(--t-fast) var(--ease-out);
+      }
+      .nav-links a:hover {
+        color: var(--text);
+        background: var(--chip);
+      }
+      .nav-links a:active {
+        transform: scale(0.96);
+      }
+      .nav-links a[aria-current="true"] {
+        color: var(--text);
+      }
+      @media (max-width: 640px) {
+        .nav-links a {
+          padding: 0.4rem 0.55rem;
+          font-size: 0.75rem;
+        }
+        .nav-links li:nth-child(3) {
+          display: none;
+        }
+      }
+
+      /* ─────────────────────────────────────────────
+     BUTTONS — feedback on press, not on release
+     ───────────────────────────────────────────── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4em;
+        padding: 0.8rem 1.4rem;
+        border-radius: var(--radius-pill);
+        font-size: 1.0625rem;
+        font-weight: 500;
+        letter-spacing: -0.012em;
+        line-height: 1;
+        border: 1px solid transparent;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          transform var(--t-fast) var(--ease-out),
+          background-color var(--t-fast) var(--ease-out),
+          border-color var(--t-fast) var(--ease-out),
+          color var(--t-fast) var(--ease-out);
+        will-change: transform;
+      }
+      .btn:active {
+        transform: scale(0.96);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--accent-text);
+        border-color: var(--accent-text);
+      }
+      .btn-secondary:hover {
+        background: var(--accent-text);
+        color: #fff;
+      }
+      .btn-quiet {
+        background: var(--chip);
+        color: var(--text);
+      }
+      .btn-quiet:hover {
+        background: var(--separator);
+      }
+      .btn svg {
+        width: 1em;
+        height: 1em;
+      }
+
+      .inline-link {
+        color: var(--accent-text);
+        font-weight: 500;
+      }
+      .inline-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+      }
+
+      .link-arrow {
+        color: var(--accent-text);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+      }
+      .link-arrow::after {
+        content: "›";
+        font-size: 1.15em;
+        line-height: 1;
+        transition: transform var(--t-fast) var(--ease-out);
+      }
+      .link-arrow:hover::after {
+        transform: translateX(2px);
+      }
+
+      /* ─────────────────────────────────────────────
+     HERO
+     ───────────────────────────────────────────── */
+      .hero {
+        padding: clamp(7rem, 16vh, 11rem) 0 clamp(3rem, 8vh, 5rem);
+      }
+      .hero-eyebrow {
+        margin-bottom: 1.25rem;
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        letter-spacing: -0.005em;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+      .hero-eyebrow .dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 20%, transparent);
+      }
+      .hero h1 {
+        margin-bottom: 1.5rem;
+        max-width: 12ch;
+      }
+      .hero-tagline {
+        max-width: 24ch;
+        margin-bottom: 1.5rem;
+        color: var(--text);
+      }
+      .hero-body {
+        max-width: 56ch;
+        color: var(--text-2);
+        margin-bottom: 2.25rem;
+      }
+      .hero-body strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .hero-cta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      /* ─────────────────────────────────────────────
+     STAT STRIP
+     ───────────────────────────────────────────── */
+      .stats {
+        padding: 2.5rem 0 clamp(4rem, 10vh, 6rem);
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+      }
+      .stat {
+        background: var(--bg-section);
+        border-radius: var(--radius-md);
+        padding: 1.5rem 1.5rem 1.4rem;
+      }
+      .stat-num {
+        display: block;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        font-variant-numeric: tabular-nums;
+        margin-bottom: 0.4rem;
+      }
+      .stat-label {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        letter-spacing: -0.01em;
+      }
+
+      /* ─────────────────────────────────────────────
+     SECTIONS
+     ───────────────────────────────────────────── */
+      .section {
+        padding: clamp(4rem, 10vh, 7rem) 0;
+      }
+      .section-alt {
+        background: var(--bg-section);
+      }
+      .section-header {
+        margin-bottom: clamp(2rem, 5vh, 3.5rem);
+        max-width: 40ch;
+      }
+      .section-header .caption {
+        margin-bottom: 0.75rem;
+      }
+      .section-header h2 {
+        margin-bottom: 0.75rem;
+      }
+      .section-header p {
+        color: var(--text-2);
+      }
+
+      /* ─────────────────────────────────────────────
+     CARDS — one language, weight encodes hierarchy
+     ───────────────────────────────────────────── */
+      .card {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        padding: clamp(1.5rem, 3vw, 2rem);
+        box-shadow: var(--card-shadow);
+        transition:
+          transform var(--t-base) var(--ease-out),
+          box-shadow var(--t-base) var(--ease-out),
+          background-color var(--t-slow) var(--ease-inout);
+        will-change: transform;
+      }
+      a.card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--card-shadow-hover);
+      }
+      a.card:active {
+        transform: translateY(-1px) scale(0.995);
+        transition-duration: var(--t-fast);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .chip {
+        background: var(--chip);
+        color: var(--chip-text);
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.005em;
+        padding: 0.3rem 0.65rem;
+        border-radius: var(--radius-pill);
+      }
+
+      /* WORK */
+      .work-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1rem;
+      }
+      .work-card {
+        grid-column: span 6;
+        display: flex;
+        flex-direction: column;
+      }
+      .work-card.wide {
+        grid-column: span 12;
+      }
+      @media (max-width: 760px) {
+        .work-card {
+          grid-column: span 12;
+        }
+      }
+
+      .work-card .caption {
+        margin-bottom: 1rem;
+      }
+      .work-card h3 {
+        margin-bottom: 0.35rem;
+      }
+      .work-card .role {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        margin-bottom: 1rem;
+        letter-spacing: -0.01em;
+      }
+      .work-card p.desc {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        flex: 1;
+      }
+      .work-card .result {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        letter-spacing: -0.01em;
+        margin-bottom: 1.25rem;
+        color: var(--text);
+      }
+      .work-card.wide .result {
+        color: var(--accent-text);
+      }
+
+      .wide-inner {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2.5rem;
+        align-items: start;
+      }
+      .wide-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem 1.5rem;
+        padding-top: 0.5rem;
+      }
+      .wide-metrics .m {
+        border-top: 1px solid var(--separator);
+        padding-top: 0.75rem;
+      }
+      .wide-metrics .m b {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+        font-variant-numeric: tabular-nums;
+      }
+      .wide-metrics .m span {
+        color: var(--text-2);
+        font-size: 0.875rem;
+      }
+      @media (max-width: 760px) {
+        .wide-inner {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+      }
+
+      /* OPEN SOURCE */
+      .oss-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      @media (max-width: 760px) {
+        .oss-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .oss-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+      .oss-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .oss-name {
+        font-family: var(--mono);
+        font-size: 1.0625rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .oss-desc {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        flex: 1;
+      }
+      .oss-meta {
+        display: flex;
+        gap: 1.1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .oss-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.875rem;
+        color: var(--text-2);
+        font-variant-numeric: tabular-nums;
+      }
+      .oss-stat svg {
+        width: 0.95em;
+        height: 0.95em;
+        fill: currentColor;
+      }
+      .oss-stat .n {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .oss-stat.lang::before {
+        content: "";
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 50%;
+        background: var(--lang, var(--text-3));
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        padding: 0.3rem 0.6rem;
+        border-radius: var(--radius-pill);
+        white-space: nowrap;
+      }
+      .badge-green {
+        background: color-mix(in srgb, var(--green) 14%, transparent);
+        color: var(--green);
+      }
+      .badge-amber {
+        background: color-mix(in srgb, var(--amber) 14%, transparent);
+        color: var(--amber);
+      }
+
+      .oss-more {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+      }
+      .oss-mini {
+        border-radius: var(--radius-sm);
+        padding: 1rem 1.1rem;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        transition:
+          transform var(--t-base) var(--ease-out),
+          background-color var(--t-fast) var(--ease-out);
+      }
+      .oss-mini:hover {
+        transform: translateY(-2px);
+      }
+      .oss-mini:active {
+        transform: translateY(0) scale(0.99);
+        transition-duration: var(--t-fast);
+      }
+      .oss-mini .oss-name {
+        font-size: 0.875rem;
+      }
+      .oss-mini .oss-desc {
+        font-size: 0.8125rem;
+      }
+      .oss-mini .oss-meta {
+        margin-top: 0.3rem;
+        gap: 0.8rem;
+      }
+      .oss-mini .oss-stat {
+        font-size: 0.8125rem;
+      }
+
+      .oss-foot {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+        color: var(--text-2);
+        font-size: 0.9375rem;
+      }
+
+      /* PHILOSOPHY */
+      .philosophy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(2rem, 6vw, 5rem);
+        align-items: start;
+      }
+      @media (max-width: 860px) {
+        .philosophy-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .quote {
+        font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+        line-height: 1.18;
+        letter-spacing: -0.025em;
+        font-weight: 600;
+        margin: 0.75rem 0 1.25rem;
+        text-wrap: balance;
+      }
+      .quote-attr {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+      }
+      .principles {
+        display: flex;
+        flex-direction: column;
+      }
+      .principle {
+        padding: 1.35rem 0;
+        border-top: 1px solid var(--separator);
+      }
+      .principle:last-child {
+        border-bottom: 1px solid var(--separator);
+      }
+      .principle h3 {
+        margin-bottom: 0.35rem;
+      }
+      .principle p {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+      }
+
+      /* TIMELINE */
+      .timeline {
+        display: flex;
+        flex-direction: column;
+      }
+      .tl {
+        display: grid;
+        grid-template-columns: 5rem 1fr;
+        gap: 1.5rem;
+        padding: 1.1rem 0;
+        border-top: 1px solid var(--separator);
+        align-items: baseline;
+      }
+      .tl:last-child {
+        border-bottom: 1px solid var(--separator);
+      }
+      .tl-year {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+        color: var(--text-3);
+        letter-spacing: -0.01em;
+      }
+      .tl-role {
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        margin-bottom: 0.15rem;
+      }
+      .tl-co {
+        color: var(--text-2);
+        font-size: 0.9375rem;
+      }
+      @media (max-width: 520px) {
+        .tl {
+          grid-template-columns: 3.5rem 1fr;
+          gap: 1rem;
+        }
+      }
+
+      /* CONTACT */
+      .contact {
+        background: var(--bg-inverse);
+        color: var(--text-inverse);
+        padding: clamp(5rem, 14vh, 9rem) 0;
+        transition:
+          background-color var(--t-slow) var(--ease-inout),
+          color var(--t-slow) var(--ease-inout);
+      }
+      .contact .caption {
+        color: color-mix(in srgb, var(--text-inverse) 55%, transparent);
+        margin-bottom: 0.75rem;
+      }
+      .contact h2 {
+        margin-bottom: 1rem;
+      }
+      .contact p.lede {
+        max-width: 56ch;
+        color: color-mix(in srgb, var(--text-inverse) 72%, transparent);
+        margin-bottom: 2.25rem;
+      }
+      .contact .hero-cta {
+        margin-bottom: 3rem;
+      }
+      .contact .btn-quiet {
+        background: color-mix(in srgb, var(--text-inverse) 12%, transparent);
+        color: var(--text-inverse);
+      }
+      .contact .btn-quiet:hover {
+        background: color-mix(in srgb, var(--text-inverse) 20%, transparent);
+      }
+      .contact-detail {
+        display: flex;
+        gap: 0.5rem 2rem;
+        flex-wrap: wrap;
+        color: color-mix(in srgb, var(--text-inverse) 55%, transparent);
+        font-size: 0.875rem;
+      }
+      .contact-detail a:hover {
+        color: var(--text-inverse);
+      }
+
+      footer {
+        padding: 1.5rem 0;
+        color: var(--text-3);
+        font-size: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      /* ─────────────────────────────────────────────
+     MOTION — reveal from current value, no overshoot
+     ───────────────────────────────────────────── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity var(--t-slow) var(--ease-out),
+          transform var(--t-slow) var(--ease-out);
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: none;
+      }
+      .reveal-stagger > * {
+        transition-delay: calc(var(--i, 0) * 45ms);
+      }
+
+      /* ─────────────────────────────────────────────
+     ACCESSIBILITY PREFERENCES
+     ───────────────────────────────────────────── */
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .reveal {
+          transform: none;
+          transition: opacity 200ms ease;
+        }
+        .reveal-stagger > * {
+          transition-delay: 0ms;
+        }
+        .card,
+        a.card:hover,
+        .oss-mini:hover,
+        .btn,
+        .btn:active,
+        .nav-links a:active {
+          transform: none !important;
+        }
+        body,
+        .contact,
+        .nav,
+        .card {
+          transition: none;
+        }
+      }
+      @media (prefers-reduced-transparency: reduce) {
+        .nav {
+          background: var(--bg);
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+          border-bottom-color: var(--separator);
+        }
+      }
+      @media (prefers-contrast: more) {
+        :root {
+          --card-border: rgba(0, 0, 0, 0.3);
+          --separator: rgba(0, 0, 0, 0.3);
+          --text-2: #3a3a3c;
+        }
+        .card,
+        .oss-mini {
+          box-shadow: none;
+        }
+      }
+      @media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+        :root:not([data-theme="light"]) {
+          --card-border: rgba(255, 255, 255, 0.4);
+          --separator: rgba(255, 255, 255, 0.4);
+          --text-2: #d1d1d6;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav" id="nav" aria-label="Primary">
+      <div class="nav-inner">
+        <a href="#top" class="nav-name">Richard Yaker</a>
+        <ul class="nav-links">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#oss">Open Source</a></li>
+          <li><a href="#philosophy">Philosophy</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container">
+          <p class="hero-eyebrow reveal">
+            <span class="dot" aria-hidden="true"></span> Available for CTO · VP Engineering · Head of AI
+          </p>
+          <h1 class="display reveal">Richard Yaker</h1>
+          <p class="hero-tagline body-lg reveal">I build things that run without you watching.</p>
+          <p class="hero-body reveal">
+            Thirty years in production, from Netscape employee #937 to MCP servers people actually use. I'm co-founding
+            <a href="https://tengolife.com/" target="_blank" rel="noopener" class="inline-link">Tengo</a> while keeping
+            the job search open. Until that funding closes, I'm available to companies that want
+            <strong>an executive who still ships</strong>. Remote, or Los Angeles and Ventura County.
+          </p>
+          <div class="hero-cta reveal">
+            <a href="mailto:ryaker@yaker.org" class="btn btn-primary">Get in touch</a>
+            <a href="https://github.com/ryaker" target="_blank" rel="noopener" class="btn btn-quiet">GitHub</a>
+            <a href="https://linkedin.com/in/richard-yaker" target="_blank" rel="noopener" class="btn btn-quiet"
+              >LinkedIn</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="stats">
+        <div class="container">
+          <div class="stat-grid reveal reveal-stagger">
+            <div class="stat" style="--i: 0">
+              <span class="stat-num" id="stat-total-stars" data-static="667">667</span>
+              <span class="stat-label">GitHub stars, all organic</span>
+            </div>
+            <div class="stat" style="--i: 1">
+              <span class="stat-num">40+</span>
+              <span class="stat-label">Engineers scaled, 6 countries</span>
+            </div>
+            <div class="stat" style="--i: 2">
+              <span class="stat-num">82%</span>
+              <span class="stat-label">Sev1 reduction at a $5B platform</span>
+            </div>
+            <div class="stat" style="--i: 3">
+              <span class="stat-num">99.95%</span>
+              <span class="stat-label">Uptime, 3M+ orders a month</span>
+            </div>
+            <div class="stat" style="--i: 4">
+              <span class="stat-num">30 yr</span>
+              <span class="stat-label">JavaScript, from its invention</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORK -->
+      <section class="section section-alt" id="work">
+        <div class="container">
+          <div class="section-header reveal">
+            <p class="caption">Selected work</p>
+            <h2 class="title-1">Built to outlast the builder.</h2>
+            <p>
+              Startups, growth companies, and a $5B enterprise. The through-line is platforms that keep running after
+              I've handed them off.
+            </p>
+          </div>
+
+          <div class="work-grid reveal reveal-stagger">
+            <article class="card work-card wide" style="--i: 0">
+              <div class="wide-inner">
+                <div>
+                  <p class="caption">2016 – 2023 · Herbalife Nutrition</p>
+                  <h3 class="title-2">Built a global SRE organization from 4 to 40+</h3>
+                  <p class="role">Senior Manager, DevOps & SRE</p>
+                  <p class="desc">
+                    Scaled engineering across Los Angeles, Winston-Salem, Guadalajara, Kuala Lumpur, Krakow, and
+                    Bengaluru. Stood up five platform teams on Team Topologies: Kubernetes, Observability, Messaging,
+                    API Management, and Value Stream Delivery. The platform served 90+ markets inside a 350-person
+                    engineering org.
+                  </p>
+                  <p class="result">$5B+ revenue platform · 90%+ retention over six years</p>
+                  <div class="chips">
+                    <span class="chip">Kubernetes</span><span class="chip">Splunk</span
+                    ><span class="chip">Dynatrace</span> <span class="chip">Team Topologies</span
+                    ><span class="chip">Multi-cloud</span><span class="chip">Kafka</span
+                    ><span class="chip">Apigee</span>
+                  </div>
+                </div>
+                <div class="wide-metrics">
+                  <div class="m"><b>99.95%</b><span>uptime</span></div>
+                  <div class="m"><b>3M+</b><span>orders per month</span></div>
+                  <div class="m"><b>82%</b><span>fewer Sev1 incidents</span></div>
+                  <div class="m"><b>15%</b><span>infrastructure cost cut</span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card work-card" style="--i: 1">
+              <p class="caption">2026 – Present · Co-Founder & CTO</p>
+              <h3 class="headline">Tengo</h3>
+              <p class="role">Wealth-management platform, New York</p>
+              <p class="desc">
+                Software that does in minutes what a room of specialists does by hand in spreadsheets: fitting the
+                instrument that has protected fortunes for generations to each client it is built for. Building the
+                platform and the agentic automation behind it, alongside a CEO from Apple Retail and a COO from FIS.
+              </p>
+              <p class="result">
+                <a href="https://tengolife.com/" target="_blank" rel="noopener" class="link-arrow">tengolife.com</a>
+              </p>
+              <div class="chips">
+                <span class="chip">AI agents</span><span class="chip">Automation</span
+                ><span class="chip">TypeScript</span><span class="chip">Python</span>
+              </div>
+            </article>
+            <article class="card work-card" style="--i: 1">
+              <p class="caption">2024 – Present · Founder & CTO</p>
+              <h3 class="headline">MyMoneyCoach.ai</h3>
+              <p class="role">Solo build, live in the App Store</p>
+              <p class="desc">
+                Full-stack AI coaching platform. LLM integration, retrieval over a vector database, semantic memory that
+                persists across sessions, and a multi-agent architecture on MCP. Designed, built, and shipped alone.
+              </p>
+              <p class="result">Live in the App Store</p>
+              <div class="chips">
+                <span class="chip">React Native</span><span class="chip">RAG</span><span class="chip">MCP</span>
+                <span class="chip">Neo4j</span><span class="chip">Supabase</span>
+              </div>
+            </article>
+
+            <article class="card work-card" style="--i: 2">
+              <p class="caption">2026 – Present · Co-Founder & CTO</p>
+              <h3 class="headline">BlockCopy</h3>
+              <p class="role">Real-time copy trading, pre-launch</p>
+              <p class="desc">
+                Followers don't copy a lead trader's trade after the fact. They join the same block and fill at the same
+                price in the same moment, with zero slippage, and can detach mid-fill while the block resizes around
+                them. Equities and options first, more asset classes on the roadmap. I rebuilt the platform from its
+                original Java codebase with AI agents and load-test it nightly against a thousand followers per block.
+              </p>
+              <p class="result">Pre-launch · gated preview</p>
+              <div class="chips">
+                <span class="chip">Next.js</span><span class="chip">Node.js</span><span class="chip">PostgreSQL</span
+                ><span class="chip">Alpaca</span><span class="chip">AI agents</span>
+              </div>
+            </article>
+
+            <article class="card work-card" style="--i: 3">
+              <p class="caption">2000 – 2002 · Founding CTO</p>
+              <h3 class="headline">WithoutABox</h3>
+              <p class="role">Acquired by Amazon / IMDb in 2008</p>
+              <p class="desc">
+                The first online film-festival submission platform, built from scratch. 54 top festivals including
+                Sundance, 10,000 filmmakers onboarded in ten months, delivered at roughly half of an $800K budget. The
+                platform I shipped in 2002 was still running when Amazon bought the company.
+              </p>
+              <p class="result">Ran six years after I left</p>
+              <div class="chips">
+                <span class="chip">Linux</span><span class="chip">PHP</span><span class="chip">Oracle</span
+                ><span class="chip">Architecture</span>
+              </div>
+            </article>
+
+            <article class="card work-card" style="--i: 3">
+              <p class="caption">2011 – 2016 · Herbalife</p>
+              <h3 class="headline">iChange & Weight Loss Challenge</h3>
+              <p class="role">Manager, Software Development</p>
+              <p class="desc">
+                A two-sided wellness coaching platform where distributors coached members: nutrition tracking, tasks,
+                progress, groups, and social accountability. Grew the team from 4 to 25 across three time zones and
+                rewrote the stack from PHP to Ruby with native iOS and Android apps. Distributors on iChange saw better
+                retention, recruiting, and sales than those off it. The companion Weight Loss Challenge tracked 1M+
+                pounds across 12,000+ challenges and ran nine years with no dedicated team.
+              </p>
+              <p class="result">+7% retention · +4% recruiting · +6% sales</p>
+              <div class="chips">
+                <span class="chip">Ruby</span><span class="chip">MongoDB</span><span class="chip">Neo4j</span>
+                <span class="chip">iOS</span><span class="chip">Android</span><span class="chip">Heroku</span>
+              </div>
+            </article>
+
+            <article class="card work-card" style="--i: 4">
+              <p class="caption">2023 – 2026 · Fractional CTO</p>
+              <h3 class="headline">Gondola InsurTech</h3>
+              <p class="role">AI-driven insurance strategy platform</p>
+              <p class="desc">
+                Built the complete technical foundation: document extraction service, insurance comparison app, internal
+                portals, and visualization tools. AI document processing took quote analysis from hours to minutes.
+              </p>
+              <p class="result">850+ GitHub contributions</p>
+              <div class="chips">
+                <span class="chip">Python</span><span class="chip">Azure</span><span class="chip">AWS Textract</span
+                ><span class="chip">LLM APIs</span>
+              </div>
+            </article>
+
+            <article class="card work-card wide" style="--i: 7">
+              <div class="wide-inner">
+                <div>
+                  <p class="caption">1995 – 1999 · Netscape</p>
+                  <h3 class="title-2">Netscape DevEdge</h3>
+                  <p class="role">Developer Support Engineer · Employee #937</p>
+                  <p class="desc">
+                    One of the first five people to learn JavaScript from Brendan Eich. Advised CNET, HotWired, ABC,
+                    Disney, CNNfn, and CBS SportsLine on building for the web. Managed a team of eight, remote from Los
+                    Angeles, in 1997, when remote was not yet a word people used.
+                  </p>
+                  <p class="result">Thirty years of continuous JavaScript, from its invention</p>
+                  <div class="chips">
+                    <span class="chip">JavaScript</span><span class="chip">DevEdge</span
+                    ><span class="chip">Remote-first</span>
+                  </div>
+                </div>
+                <div class="wide-metrics">
+                  <div class="m"><b>#937</b><span>Netscape employee</span></div>
+                  <div class="m"><b>5</b><span>first to learn JavaScript</span></div>
+                  <div class="m"><b>8</b><span>engineers managed</span></div>
+                  <div class="m"><b>1997</b><span>working remote</span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- OPEN SOURCE -->
+      <section class="section" id="oss">
+        <div class="container">
+          <div class="section-header reveal">
+            <p class="caption">Open source</p>
+            <h2 class="title-1">Shipped in public.</h2>
+            <p>
+              I don't just architect AI systems. I publish them and watch communities form around them. None of these
+              were promoted.
+            </p>
+          </div>
+
+          <div class="oss-grid reveal reveal-stagger">
+            <a
+              href="https://github.com/ryaker/outlook-mcp"
+              target="_blank"
+              rel="noopener"
+              class="card oss-card"
+              style="--i: 0"
+              data-repo="outlook-mcp"
+            >
+              <div class="oss-top">
+                <span class="oss-name">outlook-mcp</span>
+                <span class="badge badge-green">Most starred</span>
+              </div>
+              <p class="oss-desc">
+                Model Context Protocol server for Microsoft Outlook over the Graph API. Lets AI agents read, send, and
+                manage email natively. The most-starred MCP integration for enterprise email.
+              </p>
+              <div class="oss-meta">
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
+                    /></svg
+                  ><span class="n" data-stars data-static="433">433</span> stars</span
+                >
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"
+                    /></svg
+                  ><span class="n" data-forks data-static="160">160</span> forks</span
+                >
+                <span class="oss-stat lang" style="--lang: #f1e05a">JavaScript</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/ryaker/appstore-connect-mcp"
+              target="_blank"
+              rel="noopener"
+              class="card oss-card"
+              style="--i: 1"
+              data-repo="appstore-connect-mcp"
+            >
+              <div class="oss-top">
+                <span class="oss-name">appstore-connect-mcp</span>
+                <span class="badge badge-amber">Gaining traction</span>
+              </div>
+              <p class="oss-desc">
+                App Store Connect for Claude and other MCP clients: iOS-compatible OAuth and full coverage of the App
+                Store Connect API. Quiet for a year, then developers started finding it on their own.
+              </p>
+              <div class="oss-meta">
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
+                    /></svg
+                  ><span class="n" data-stars data-static="31">31</span> stars</span
+                >
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"
+                    /></svg
+                  ><span class="n" data-forks data-static="9">9</span> forks</span
+                >
+                <span class="oss-stat lang" style="--lang: #3178c6">TypeScript</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/ryaker/zora"
+              target="_blank"
+              rel="noopener"
+              class="card oss-card"
+              style="--i: 2"
+              data-repo="zora"
+            >
+              <div class="oss-top">
+                <span class="oss-name">zora</span>
+              </div>
+              <p class="oss-desc">
+                A long-running local AI agent with a provider registry and secure tool access. The deterministic harness
+                around non-deterministic models, built for production reliability rather than demos.
+              </p>
+              <div class="oss-meta">
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
+                    /></svg
+                  ><span class="n" data-stars data-static="76">76</span> stars</span
+                >
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"
+                    /></svg
+                  ><span class="n" data-forks data-static="7">7</span> forks</span
+                >
+                <span class="oss-stat lang" style="--lang: #3178c6">TypeScript</span>
+                <span class="oss-stat">v0.12</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/ryaker/SparrowDB"
+              target="_blank"
+              rel="noopener"
+              class="card oss-card"
+              style="--i: 3"
+              data-repo="SparrowDB"
+            >
+              <div class="oss-top">
+                <span class="oss-name">SparrowDB</span>
+              </div>
+              <p class="oss-desc">
+                Embedded graph database in Rust. Cypher queries, no server, no subscription, with Python, Node.js, and
+                Ruby bindings. Built because the right tool didn't exist yet.
+              </p>
+              <div class="oss-meta">
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
+                    /></svg
+                  ><span class="n" data-stars data-static="75">75</span> stars</span
+                >
+                <span class="oss-stat"
+                  ><svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"
+                    /></svg
+                  ><span class="n" data-forks data-static="6">6</span> forks</span
+                >
+                <span class="oss-stat lang" style="--lang: #dea584">Rust</span>
+                <span class="oss-stat">v0.1.27</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="oss-more reveal reveal-stagger">
+            <a
+              href="https://github.com/ryaker/SparrowOntology"
+              target="_blank"
+              rel="noopener"
+              class="oss-mini"
+              style="--i: 0"
+              data-repo="SparrowOntology"
+            >
+              <span class="oss-name">SparrowOntology</span>
+              <span class="oss-desc">Ontology semantic layer for SparrowDB.</span>
+              <span class="oss-meta"
+                ><span class="oss-stat"><span class="n" data-stars data-static="18">18</span> stars</span
+                ><span class="oss-stat lang" style="--lang: #dea584">Rust</span></span
+              >
+            </a>
+            <a
+              href="https://github.com/ryaker/mcp-mem0-general"
+              target="_blank"
+              rel="noopener"
+              class="oss-mini"
+              style="--i: 1"
+              data-repo="mcp-mem0-general"
+            >
+              <span class="oss-name">mcp-mem0-general</span>
+              <span class="oss-desc">Persistent memory for any MCP client via Mem0.</span>
+              <span class="oss-meta"
+                ><span class="oss-stat"><span class="n" data-stars data-static="16">16</span> stars</span
+                ><span class="oss-stat lang" style="--lang: #3572a5">Python</span></span
+              >
+            </a>
+            <a
+              href="https://github.com/ryaker/l16-pipeline"
+              target="_blank"
+              rel="noopener"
+              class="oss-mini"
+              style="--i: 2"
+              data-repo="l16-pipeline"
+            >
+              <span class="oss-name">l16-pipeline</span>
+              <span class="oss-desc">ML/CV pipeline for the Light L16 camera with Apple Depth Pro.</span>
+              <span class="oss-meta"
+                ><span class="oss-stat"><span class="n" data-stars data-static="4">4</span> stars</span
+                ><span class="oss-stat lang" style="--lang: #3572a5">Python</span></span
+              >
+            </a>
+            <a
+              href="https://github.com/ryaker/MCP-JS-Server-Template"
+              target="_blank"
+              rel="noopener"
+              class="oss-mini"
+              style="--i: 3"
+              data-repo="MCP-JS-Server-Template"
+            >
+              <span class="oss-name">MCP-JS-Server-Template</span>
+              <span class="oss-desc">Simplified MCP server template for Node.js.</span>
+              <span class="oss-meta"
+                ><span class="oss-stat"><span class="n" data-stars data-static="4">4</span> stars</span
+                ><span class="oss-stat lang" style="--lang: #f1e05a">JavaScript</span></span
+              >
+            </a>
+          </div>
+
+          <div class="oss-foot reveal">
+            <span id="oss-updated">Counts refreshed from GitHub on each visit.</span>
+            <a href="https://github.com/ryaker?tab=repositories" target="_blank" rel="noopener" class="link-arrow"
+              >All repositories</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- PHILOSOPHY -->
+      <section class="section section-alt" id="philosophy">
+        <div class="container">
+          <div class="philosophy-grid">
+            <div class="reveal">
+              <p class="caption">How I lead</p>
+              <blockquote class="quote">
+                “Most of what gets called AI engineering right now is people wiring up demos. I build the harness. The
+                deterministic part. The part that has to keep working when nobody's watching.”
+              </blockquote>
+              <p class="quote-attr">On what separates production AI from prototype AI</p>
+            </div>
+            <div class="principles reveal reveal-stagger">
+              <div class="principle" style="--i: 0">
+                <h3 class="headline">Build for the successor, not the sprint</h3>
+                <p>
+                  WithoutABox ran six years after I left. The Weight Loss Challenge ran nine with no team. I optimize
+                  for longevity, not demos.
+                </p>
+              </div>
+              <div class="principle" style="--i: 1">
+                <h3 class="headline">Developer joy drives adoption</h3>
+                <p>
+                  Learned at Netscape in 1995. The tools change. Making engineers feel capable and creative is what
+                  drives adoption, and that never changes.
+                </p>
+              </div>
+              <div class="principle" style="--i: 2">
+                <h3 class="headline">Psychological safety is a technical investment</h3>
+                <p>
+                  Teams that can say “I don't know” ship faster than teams that can't. Ninety percent retention over six
+                  years wasn't an accident.
+                </p>
+              </div>
+              <div class="principle" style="--i: 3">
+                <h3 class="headline">Be the calm in the room</h3>
+                <p>
+                  Twenty years of daily Vedic meditation. When a Sev1 hits at 2am, the executive who stays grounded
+                  makes better decisions than the one in fight-or-flight.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIMELINE -->
+      <section class="section">
+        <div class="container">
+          <div class="section-header reveal">
+            <p class="caption">Career arc</p>
+            <h2 class="title-1">Thirty years of building.</h2>
+          </div>
+          <div class="timeline reveal reveal-stagger">
+            <div class="tl" style="--i: 0">
+              <span class="tl-year">2026</span>
+              <div>
+                <p class="tl-role">Co-Founder & CTO, Tengo</p>
+                <p class="tl-co">Wealth-management platform · with a CEO from Apple Retail and a COO from FIS</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 1">
+              <span class="tl-year">2026</span>
+              <div>
+                <p class="tl-role">Co-Founder & CTO, BlockCopy</p>
+                <p class="tl-co">Real-time copy trading · rebuilt with AI agents · pre-launch</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 2">
+              <span class="tl-year">2024</span>
+              <div>
+                <p class="tl-role">Founder & CTO, MyMoneyCoach.ai</p>
+                <p class="tl-co">AI coaching platform, live in the App Store</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 1">
+              <span class="tl-year">2023</span>
+              <div>
+                <p class="tl-role">Fractional CTO, Gondola InsurTech</p>
+                <p class="tl-co">AI document processing · 850+ GitHub contributions</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 2">
+              <span class="tl-year">2016</span>
+              <div>
+                <p class="tl-role">Sr. Manager, DevOps & SRE, Herbalife Nutrition</p>
+                <p class="tl-co">4 → 40+ engineers · 6 countries · 99.95% uptime</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 3">
+              <span class="tl-year">2011</span>
+              <div>
+                <p class="tl-role">Manager, Software Development, Herbalife</p>
+                <p class="tl-co">4 → 25 engineers · native iOS and Android · measurable business results</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 4">
+              <span class="tl-year">2000</span>
+              <div>
+                <p class="tl-role">Founding CTO, WithoutABox</p>
+                <p class="tl-co">Acquired by Amazon / IMDb in 2008 · platform ran six years post-departure</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 5">
+              <span class="tl-year">1995</span>
+              <div>
+                <p class="tl-role">Developer Support Engineer, Netscape</p>
+                <p class="tl-co">Employee #937 · learned JavaScript from Brendan Eich</p>
+              </div>
+            </div>
+            <div class="tl" style="--i: 6">
+              <span class="tl-year">1990</span>
+              <div>
+                <p class="tl-role">Software Engineer, Amdahl Corporation</p>
+                <p class="tl-co">UNIX kernel development · ported System V R4 to IBM mainframes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="contact" id="contact">
+        <div class="container">
+          <p class="caption reveal">Available for senior roles</p>
+          <h2 class="title-1 reveal">Let's talk.</h2>
+          <p class="lede body-lg reveal">
+            CTO, VP Engineering, Head of AI or Platform. Remote, or Los Angeles and Ventura County. If you're building
+            something that has to actually work in production, I know how to do that.
+          </p>
+          <div class="hero-cta reveal">
+            <a href="mailto:ryaker@yaker.org" class="btn btn-primary">ryaker@yaker.org</a>
+            <a href="https://linkedin.com/in/richard-yaker" target="_blank" rel="noopener" class="btn btn-quiet"
+              >LinkedIn</a
+            >
+            <a href="https://github.com/ryaker" target="_blank" rel="noopener" class="btn btn-quiet">GitHub</a>
+          </div>
+          <div class="contact-detail reveal">
+            <a href="tel:+18057322129">(805) 732-2129</a>
+            <span>Camarillo, CA</span>
+            <span>B.S. Electrical Engineering, Columbia University</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container">
+      <span>© <span id="year"></span> Richard Yaker</span>
+      <span>Set in the system font. Adapts to light, dark, reduced motion, and reduced transparency.</span>
+    </footer>
+
+    <script>
+      (() => {
+        "use strict";
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        /* ── Nav: scroll-edge instead of a permanent hard divider ── */
+        const nav = document.getElementById("nav");
+        const onScroll = () => nav.classList.toggle("is-scrolled", scrollY > 8);
+        addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        /* ── Section wayfinding: mark the current nav item ── */
+        const navLinks = [...document.querySelectorAll(".nav-links a")];
+        const spy = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (!e.isIntersecting) return;
+              const id = "#" + e.target.id;
+              navLinks.forEach((a) => a.setAttribute("aria-current", a.getAttribute("href") === id ? "true" : "false"));
+            });
+          },
+          { rootMargin: "-40% 0px -55% 0px" },
+        );
+        navLinks
+          .map((a) => document.querySelector(a.getAttribute("href")))
+          .filter(Boolean)
+          .forEach((s) => spy.observe(s));
+
+        /* ── Reveal on enter. Once in, stays in — no re-animating on scroll back. ── */
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -5% 0px" },
+        );
+        document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+        /* ── Number tween: critically damped, from the current value, tabular digits ── */
+        function tween(el, to) {
+          const from = parseInt(el.textContent.replace(/[^\d]/g, ""), 10) || 0;
+          if (from === to) return;
+          if (reduced) {
+            el.textContent = to.toLocaleString();
+            return;
+          }
+          const t0 = performance.now(),
+            dur = 600;
+          const ease = (t) => 1 - Math.pow(1 - t, 3);
+          const step = (now) => {
+            const p = Math.min(1, (now - t0) / dur);
+            el.textContent = Math.round(from + (to - from) * ease(p)).toLocaleString();
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+
+        /* ── Live GitHub counts. Static values in the HTML are the fallback. ── */
+        const USER = "ryaker";
+        const CACHE_KEY = "gh-stats-v2";
+        const TTL = 6 * 60 * 60 * 1000;
+
+        const apply = (byRepo, total) => {
+          document.querySelectorAll("[data-repo]").forEach((card) => {
+            const d = byRepo[card.dataset.repo];
+            if (!d) return;
+            const s = card.querySelector("[data-stars]");
+            const f = card.querySelector("[data-forks]");
+            if (s && Number.isFinite(d.stars)) tween(s, d.stars);
+            if (f && Number.isFinite(d.forks)) tween(f, d.forks);
+          });
+          const totalEl = document.getElementById("stat-total-stars");
+          if (totalEl && Number.isFinite(total)) tween(totalEl, total);
+        };
+
+        (async () => {
+          try {
+            const c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+            if (c && Date.now() - c.t < TTL) {
+              apply(c.byRepo, c.total);
+              return;
+            }
+          } catch (_) {}
+          try {
+            const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&type=owner`, {
+              headers: { Accept: "application/vnd.github+json" },
+            });
+            if (!r.ok) return;
+            const repos = await r.json();
+            const byRepo = {};
+            let total = 0;
+            for (const repo of repos) {
+              if (repo.fork) continue;
+              byRepo[repo.name] = { stars: repo.stargazers_count, forks: repo.forks_count };
+              total += repo.stargazers_count;
+            }
+            try {
+              localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), byRepo, total }));
+            } catch (_) {}
+            apply(byRepo, total);
+          } catch (_) {
+            /* keep static numbers */
+          }
+        })();
+      })();
+    </script>
+  </body>
 </html>
