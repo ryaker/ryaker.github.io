@@ -327,6 +327,15 @@
         height: 1em;
       }
 
+      .inline-link {
+        color: var(--accent-text);
+        font-weight: 500;
+      }
+      .inline-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+      }
+
       .link-arrow {
         color: var(--accent-text);
         font-weight: 500;
@@ -942,7 +951,8 @@
           <p class="hero-tagline body-lg reveal">I build things that run without you watching.</p>
           <p class="hero-body reveal">
             Thirty years in production, from Netscape employee #937 to MCP servers people actually use. I'm co-founding
-            Tengo while keeping the job search open. Until that funding closes, I'm available to companies that want
+            <a href="https://tengolife.com/" target="_blank" rel="noopener" class="inline-link">Tengo</a> while keeping
+            the job search open. Until that funding closes, I'm available to companies that want
             <strong>an executive who still ships</strong>. Remote, or Los Angeles and Ventura County.
           </p>
           <div class="hero-cta reveal">
@@ -1026,6 +1036,23 @@
             </article>
 
             <article class="card work-card" style="--i: 1">
+              <p class="caption">2026 – Present · Co-Founder & CTO</p>
+              <h3 class="headline">Tengo</h3>
+              <p class="role">Wealth-management platform, New York</p>
+              <p class="desc">
+                Software that does in minutes what a room of specialists does by hand in spreadsheets: fitting the
+                instrument that has protected fortunes for generations to each client it is built for. Building the
+                platform and the agentic automation behind it, alongside a CEO from Apple Retail and a COO from FIS.
+              </p>
+              <p class="result">
+                <a href="https://tengolife.com/" target="_blank" rel="noopener" class="link-arrow">tengolife.com</a>
+              </p>
+              <div class="chips">
+                <span class="chip">AI agents</span><span class="chip">Automation</span
+                ><span class="chip">TypeScript</span><span class="chip">Python</span>
+              </div>
+            </article>
+            <article class="card work-card" style="--i: 1">
               <p class="caption">2024 – Present · Founder & CTO</p>
               <h3 class="headline">MyMoneyCoach.ai</h3>
               <p class="role">Solo build, live in the App Store</p>
@@ -1089,29 +1116,19 @@
               </div>
             </article>
 
-            <article class="card work-card wide" style="--i: 5">
-              <div class="wide-inner">
-                <div>
-                  <p class="caption">1995 – 1999 · Netscape</p>
-                  <h3 class="title-2">Netscape DevEdge</h3>
-                  <p class="role">Developer Support Engineer · Employee #937</p>
-                  <p class="desc">
-                    One of the first five people to learn JavaScript from Brendan Eich. Advised CNET, HotWired, ABC,
-                    Disney, CNNfn, and CBS SportsLine on building for the web. Managed a team of eight, remote from Los
-                    Angeles, in 1997, when remote was not yet a word people used.
-                  </p>
-                  <p class="result">Thirty years of continuous JavaScript, from its invention</p>
-                  <div class="chips">
-                    <span class="chip">JavaScript</span><span class="chip">DevEdge</span
-                    ><span class="chip">Remote-first</span>
-                  </div>
-                </div>
-                <div class="wide-metrics">
-                  <div class="m"><b>#937</b><span>Netscape employee</span></div>
-                  <div class="m"><b>5</b><span>first to learn JavaScript</span></div>
-                  <div class="m"><b>8</b><span>engineers managed</span></div>
-                  <div class="m"><b>1997</b><span>working remote</span></div>
-                </div>
+            <article class="card work-card" style="--i: 6">
+              <p class="caption">1995 – 1999 · Netscape</p>
+              <h3 class="headline">Netscape DevEdge</h3>
+              <p class="role">Developer Support Engineer · Employee #937</p>
+              <p class="desc">
+                One of the first five people to learn JavaScript from Brendan Eich. Advised CNET, HotWired, ABC, Disney,
+                CNNfn, and CBS SportsLine on building for the web. Managed a team of eight, remote from Los Angeles, in
+                1997.
+              </p>
+              <p class="result">Thirty years of continuous JavaScript, from its invention</p>
+              <div class="chips">
+                <span class="chip">JavaScript</span><span class="chip">DevEdge</span
+                ><span class="chip">Remote-first</span>
               </div>
             </article>
           </div>
@@ -1398,6 +1415,13 @@
             <h2 class="title-1">Thirty years of building.</h2>
           </div>
           <div class="timeline reveal reveal-stagger">
+            <div class="tl" style="--i: 0">
+              <span class="tl-year">2026</span>
+              <div>
+                <p class="tl-role">Co-Founder & CTO, Tengo</p>
+                <p class="tl-co">Wealth-management platform · with a CEO from Apple Retail and a COO from FIS</p>
+              </div>
+            </div>
             <div class="tl" style="--i: 0">
               <span class="tl-year">2024</span>
               <div>
