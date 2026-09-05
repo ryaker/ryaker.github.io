@@ -18,6 +18,11 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ryaker.github.io/" />
+    <meta property="og:image" content="https://ryaker.github.io/assets/og.jpg" />
+    <meta property="og:image:width" content="960" />
+    <meta property="og:image:height" content="1200" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ryaker.github.io/assets/og.jpg" />
     <style>
       /* ─────────────────────────────────────────────
      TOKENS  — light first, dark redefined below
@@ -358,6 +363,40 @@
      ───────────────────────────────────────────── */
       .hero {
         padding: clamp(7rem, 16vh, 11rem) 0 clamp(3rem, 8vh, 5rem);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: clamp(2rem, 6vw, 5rem);
+        align-items: start;
+      }
+      .hero-photo {
+        width: clamp(200px, 22vw, 280px);
+        aspect-ratio: 4 / 5;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        background: #2a2a2c;
+        box-shadow: var(--card-shadow);
+        /* Sits on the name's baseline, not the eyebrow */
+        margin-top: 2.6rem;
+      }
+      .hero-photo img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      @media (max-width: 760px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        .hero-photo {
+          order: -1;
+          width: 88px;
+          margin-top: 0;
+          border-radius: var(--radius-md);
+        }
       }
       .hero-eyebrow {
         margin-bottom: 1.25rem;
@@ -943,24 +982,33 @@
     <main id="top">
       <!-- HERO -->
       <section class="hero">
-        <div class="container">
-          <p class="hero-eyebrow reveal">
-            <span class="dot" aria-hidden="true"></span> Available for CTO · VP Engineering · Head of AI
-          </p>
-          <h1 class="display reveal">Richard Yaker</h1>
-          <p class="hero-tagline body-lg reveal">I build things that run without you watching.</p>
-          <p class="hero-body reveal">
-            Thirty years in production, from Netscape employee #937 to MCP servers people actually use. I'm co-founding
-            <a href="https://tengolife.com/" target="_blank" rel="noopener" class="inline-link">Tengo</a> while keeping
-            the job search open. Until that funding closes, I'm available to companies that want
-            <strong>an executive who still ships</strong>. Remote, or Los Angeles and Ventura County.
-          </p>
-          <div class="hero-cta reveal">
-            <a href="mailto:ryaker@yaker.org" class="btn btn-primary">Get in touch</a>
-            <a href="https://github.com/ryaker" target="_blank" rel="noopener" class="btn btn-quiet">GitHub</a>
-            <a href="https://linkedin.com/in/richard-yaker" target="_blank" rel="noopener" class="btn btn-quiet"
-              >LinkedIn</a
-            >
+        <div class="container hero-grid">
+          <div>
+            <p class="hero-eyebrow reveal">
+              <span class="dot" aria-hidden="true"></span> Available for CTO · VP Engineering · Head of AI
+            </p>
+            <h1 class="display reveal">Richard Yaker</h1>
+            <p class="hero-tagline body-lg reveal">I build things that run without you watching.</p>
+            <p class="hero-body reveal">
+              Thirty years in production, from Netscape employee #937 to MCP servers people actually use. I'm
+              co-founding
+              <a href="https://tengolife.com/" target="_blank" rel="noopener" class="inline-link">Tengo</a> while
+              keeping the job search open. Until that funding closes, I'm available to companies that want
+              <strong>an executive who still ships</strong>. Remote, or Los Angeles and Ventura County.
+            </p>
+            <div class="hero-cta reveal">
+              <a href="mailto:ryaker@yaker.org" class="btn btn-primary">Get in touch</a>
+              <a href="https://github.com/ryaker" target="_blank" rel="noopener" class="btn btn-quiet">GitHub</a>
+              <a href="https://linkedin.com/in/richard-yaker" target="_blank" rel="noopener" class="btn btn-quiet"
+                >LinkedIn</a
+              >
+            </div>
+          </div>
+          <div class="hero-photo reveal">
+            <picture>
+              <source srcset="assets/headshot.webp" type="image/webp" />
+              <img src="assets/headshot.jpg" width="640" height="800" alt="Richard Yaker" fetchpriority="high" />
+            </picture>
           </div>
         </div>
       </section>
