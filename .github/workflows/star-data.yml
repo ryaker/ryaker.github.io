@@ -1,0 +1,49 @@
+name: Star data
+
+# Bakes counts and star history into assets/stars.json on a schedule, so the
+# page serves them same-origin instead of spending each visitor's
+# unauthenticated GitHub rate limit. Runs against main; commits only when the
+# numbers actually move.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/star-data.yml
+      - .github/scripts/star-data.mjs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: star-data
+  cancel-in-progress: false
+
+jobs:
+  bake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Fetch counts and star history
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/star-data.mjs
+
+      - name: Commit if the numbers moved
+        run: |
+          if git diff --quiet -- assets/stars.json; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/stars.json
+          git commit -m "Refresh star data"
+          git push || (git pull --rebase --autostash origin main && git push)
