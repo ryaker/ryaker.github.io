@@ -38,12 +38,18 @@ jobs:
 
       - name: Commit if the numbers moved
         run: |
-          if git diff --quiet -- assets/stars.json; then
+          if [ ! -f assets/stars.json ]; then
+            echo "No assets/stars.json to commit."
+            exit 0
+          fi
+          # Staged, not working-tree: an untracked file has no diff, so the
+          # first run — the one that creates the file — would look unchanged.
+          git add -- assets/stars.json
+          if git diff --cached --quiet -- assets/stars.json; then
             echo "Nothing to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/stars.json
           git commit -m "Refresh star data"
           git push || (git pull --rebase --autostash origin main && git push)
