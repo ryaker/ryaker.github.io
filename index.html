@@ -686,6 +686,41 @@
         border-radius: 50%;
         background: var(--lang, var(--text-3));
       }
+
+      /* Star history: 30 weeks of cumulative stars, drawn from GitHub's
+         privacy-safe star history endpoint. Added by script — a card with no
+         history data simply keeps its counts. */
+      .oss-spark {
+        display: block;
+        width: 100%;
+        height: 36px;
+        overflow: visible;
+      }
+      .oss-spark .spark-area {
+        fill: color-mix(in srgb, var(--accent) 12%, transparent);
+        opacity: 0;
+        transition: opacity var(--t-slow) var(--ease-out);
+      }
+      .oss-spark .spark-line {
+        fill: none;
+        stroke: var(--accent-text);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .oss-spark .spark-dot {
+        fill: var(--accent-text);
+        opacity: 0;
+        transition: opacity var(--t-base) var(--ease-out) 520ms;
+      }
+      .oss-spark.in .spark-area,
+      .oss-spark.in .spark-dot {
+        opacity: 1;
+      }
+      .oss-stat.trend {
+        color: var(--green);
+        font-weight: 600;
+      }
       .badge {
         display: inline-flex;
         align-items: center;
@@ -934,6 +969,10 @@
         .contact,
         .nav,
         .card {
+          transition: none;
+        }
+        .oss-spark .spark-area,
+        .oss-spark .spark-dot {
           transition: none;
         }
       }
@@ -1428,7 +1467,7 @@
           </div>
 
           <div class="oss-foot reveal">
-            <span id="oss-updated">Counts refreshed from GitHub on each visit.</span>
+            <span id="oss-updated">Counts and star history refreshed from GitHub on each visit.</span>
             <a href="https://github.com/ryaker?tab=repositories" target="_blank" rel="noopener" class="link-arrow"
               >All repositories</a
             >
@@ -1651,8 +1690,14 @@
 
         /* ── Live GitHub counts. Static values in the HTML are the fallback. ── */
         const USER = "ryaker";
+        const GH = { Accept: "application/vnd.github+json" };
         const CACHE_KEY = "gh-stats-v2";
         const TTL = 6 * 60 * 60 * 1000;
+
+        /* Settled once with the live counts (or {} if they never arrive) so the
+           sparklines below can anchor their running totals to a real number. */
+        let settleCounts;
+        const counts = new Promise((resolve) => (settleCounts = resolve));
 
         const apply = (byRepo, total) => {
           document.querySelectorAll("[data-repo]").forEach((card) => {
@@ -1672,14 +1717,15 @@
             const c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
             if (c && Date.now() - c.t < TTL) {
               apply(c.byRepo, c.total);
+              settleCounts(c.byRepo);
               return;
             }
           } catch (_) {}
           try {
             const r = await fetch(`https://api.github.com/users/${USER}/repos?per_page=100&type=owner`, {
-              headers: { Accept: "application/vnd.github+json" },
+              headers: GH,
             });
-            if (!r.ok) return;
+            if (!r.ok) return settleCounts({});
             const repos = await r.json();
             const byRepo = {};
             let total = 0;
@@ -1692,10 +1738,177 @@
               localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), byRepo, total }));
             } catch (_) {}
             apply(byRepo, total);
+            settleCounts(byRepo);
           } catch (_) {
             /* keep static numbers */
+            settleCounts({});
           }
         })();
+
+        /* ── Star history. GitHub's star history endpoint returns weekly star
+           counts — no stargazer identities — so the shape of a repo's growth is
+           public without the people behind it being. It gives gains per week; the
+           running total is walked backwards from today's count. ── */
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const HIST_KEY = "gh-star-history-v1";
+        const HIST_TTL = 6 * 60 * 60 * 1000;
+        const HIST_WEEKS = 30; /* the endpoint's page cap, ~7 months */
+
+        const histCache = (() => {
+          try {
+            const c = JSON.parse(localStorage.getItem(HIST_KEY) || "null");
+            if (c && Date.now() - c.t < HIST_TTL && c.repos) return c.repos;
+          } catch (_) {}
+          return {};
+        })();
+
+        /* [[weekStartSeconds, starsGainedThatWeek], ...], oldest first. */
+        async function weeklyStars(repo) {
+          if (histCache[repo]) return histCache[repo];
+          const r = await fetch(
+            `https://api.github.com/repos/${USER}/${repo}/stargazers/history?per_page=${HIST_WEEKS}`,
+            { headers: GH },
+          );
+          if (!r.ok) throw new Error(`star history ${r.status}`);
+          const weeks = await r.json();
+          if (!Array.isArray(weeks)) throw new Error("unexpected star history shape");
+          const rows = weeks
+            .map((w) => [w.week, Number.isFinite(w.total) ? w.total : (w.days || []).reduce((a, b) => a + b, 0)])
+            .filter(([week, gained]) => Number.isFinite(week) && Number.isFinite(gained))
+            .sort((a, b) => a[0] - b[0]);
+          histCache[repo] = rows;
+          try {
+            localStorage.setItem(HIST_KEY, JSON.stringify({ t: Date.now(), repos: histCache }));
+          } catch (_) {}
+          return rows;
+        }
+
+        function sparkline(card, points, label) {
+          const meta = card.querySelector(".oss-meta");
+          if (!meta || points.length < 3) return;
+
+          const svg = document.createElementNS(SVGNS, "svg");
+          svg.setAttribute("class", "oss-spark");
+          svg.setAttribute("role", "img");
+          svg.setAttribute("aria-label", label);
+          const area = document.createElementNS(SVGNS, "path");
+          area.setAttribute("class", "spark-area");
+          const line = document.createElementNS(SVGNS, "path");
+          line.setAttribute("class", "spark-line");
+          const dot = document.createElementNS(SVGNS, "circle");
+          dot.setAttribute("class", "spark-dot");
+          dot.setAttribute("r", "2.5");
+          svg.append(area, line, dot);
+          card.insertBefore(svg, meta);
+
+          /* The viewBox tracks the real pixel width, so strokes and the end dot
+             stay true instead of stretching with the card. */
+          const H = 36,
+            INSET = 4;
+          const last = points.length - 1;
+          const lo = Math.min(...points),
+            hi = Math.max(...points),
+            span = hi - lo;
+          let width = 0;
+
+          const render = () => {
+            const w = Math.round(svg.getBoundingClientRect().width);
+            if (!w || w === width) return;
+            const first = !width;
+            width = w;
+            svg.setAttribute("viewBox", `0 0 ${w} ${H}`);
+            const x = (i) => INSET + (i / last) * (w - INSET * 2);
+            /* A repo with no movement in the window sits flat on the baseline,
+               where its lowest value would land on any other curve. */
+            const y = (v) => (span ? H - INSET - ((v - lo) / span) * (H - INSET * 2) : H - INSET);
+            const d = points.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+            line.setAttribute("d", d);
+            area.setAttribute("d", `${d} L${x(last).toFixed(1)} ${H} L${x(0).toFixed(1)} ${H} Z`);
+            dot.setAttribute("cx", x(last).toFixed(1));
+            dot.setAttribute("cy", y(points[last]).toFixed(1));
+
+            if (!first) {
+              line.style.strokeDasharray = "none"; /* a resize redraws, it doesn't replay */
+              return;
+            }
+            if (!reduced) {
+              const len = line.getTotalLength();
+              line.style.strokeDasharray = len;
+              line.style.strokeDashoffset = len;
+              line.getBoundingClientRect(); /* commit the offset before transitioning */
+              line.style.transition = "stroke-dashoffset 900ms var(--ease-out)";
+              line.style.strokeDashoffset = "0";
+            }
+            requestAnimationFrame(() => svg.classList.add("in"));
+          };
+
+          render();
+          if ("ResizeObserver" in window) {
+            let raf = 0;
+            new ResizeObserver(() => {
+              cancelAnimationFrame(raf);
+              raf = requestAnimationFrame(render);
+            }).observe(svg);
+          }
+        }
+
+        function trend(card, gained) {
+          const meta = card.querySelector(".oss-meta");
+          if (!meta || meta.querySelector(".trend")) return;
+          const el = document.createElement("span");
+          el.className = "oss-stat trend";
+          el.textContent = `+${gained.toLocaleString()} in 30d`;
+          el.title = `${gained.toLocaleString()} new stars in the past 30 days`;
+          meta.insertBefore(el, meta.querySelector(".lang"));
+        }
+
+        async function drawHistory(card) {
+          const repo = card.dataset.repo;
+          const el = card.querySelector("[data-stars]");
+          const byRepo = await counts;
+          const current = byRepo[repo]?.stars ?? parseInt((el && el.dataset.static) || "", 10);
+          if (!Number.isFinite(current) || current <= 0) return;
+
+          let rows;
+          try {
+            rows = await weeklyStars(repo);
+          } catch (_) {
+            return; /* the counts alone still tell the story */
+          }
+          if (!rows || rows.length < 2) return;
+
+          const gained = rows.reduce((a, [, n]) => a + n, 0);
+          let running = Math.max(0, current - gained);
+          const points = [running];
+          for (const [, n] of rows) points.push((running = Math.max(0, running + n)));
+
+          const cutoff = Date.now() / 1000 - 30 * 86400;
+          const recent = rows.filter(([week]) => week >= cutoff).reduce((a, [, n]) => a + n, 0);
+
+          sparkline(
+            card,
+            points,
+            `${repo} star history: ${points[0].toLocaleString()} to ${current.toLocaleString()} stars over the past ${rows.length} weeks`,
+          );
+          if (recent > 0) trend(card, recent);
+        }
+
+        /* Deferred until the cards are near the viewport — one request per repo,
+           against an unauthenticated hourly budget. */
+        const ossCards = [...document.querySelectorAll(".oss-card[data-repo]")];
+        if (ossCards.length) {
+          const histIO = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (!e.isIntersecting) return;
+                histIO.unobserve(e.target);
+                drawHistory(e.target);
+              });
+            },
+            { rootMargin: "200px 0px" },
+          );
+          ossCards.forEach((c) => histIO.observe(c));
+        }
       })();
     </script>
   </body>
