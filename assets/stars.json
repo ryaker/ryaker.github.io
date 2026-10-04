@@ -1,7 +1,7 @@
 {
-  "generated": "2026-10-02T12:32:47.492Z",
+  "generated": "2026-10-04T00:09:53.073Z",
   "user": "ryaker",
-  "total": 693,
+  "total": 692,
   "repos": {
     "ACphotos": {
       "stars": 1,
@@ -882,7 +882,7 @@
       ]
     },
     "appstore-connect-mcp": {
-      "stars": 40,
+      "stars": 39,
       "forks": 11,
       "weeks": [
         [
@@ -991,7 +991,7 @@
         ],
         [
           1788652800,
-          4
+          3
         ],
         [
           1789257600,
