@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-21T12:21:32.033Z",
+  "generated": "2026-10-22T17:23:00.202Z",
   "user": "ryaker",
   "total": 710,
   "repos": {
@@ -1410,10 +1410,6 @@
       ]
     },
     "langchain-sparrowdb": {
-      "stars": 0,
-      "forks": 0
-    },
-    "maven-simple": {
       "stars": 0,
       "forks": 0
     },
