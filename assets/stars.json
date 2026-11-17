@@ -1,7 +1,7 @@
 {
-  "generated": "2026-11-17T01:54:53.243Z",
+  "generated": "2026-11-17T09:47:35.652Z",
   "user": "ryaker",
-  "total": 736,
+  "total": 735,
   "repos": {
     "ACphotos": {
       "stars": 1,
@@ -1674,7 +1674,7 @@
       "forks": 0
     },
     "outlook-mcp": {
-      "stars": 459,
+      "stars": 458,
       "forks": 167,
       "weeks": [
         [
@@ -1743,7 +1743,7 @@
         ],
         [
           1786838400,
-          6
+          5
         ],
         [
           1787443200,
